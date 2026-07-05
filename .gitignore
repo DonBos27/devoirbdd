@@ -1,0 +1,4 @@
+mongo-cluster/
+logs/
+*.log
+.DS_Store
