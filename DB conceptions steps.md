@@ -134,7 +134,22 @@ sh.enableSharding("momo")
 db.transactions.createIndex({ senderPhone: "hashed" })
 sh.shardCollection("momo.transactions", { senderPhone: "hashed" })
 ## 12- Générer transactions
-// Charger tous les users en mémoire pour un accès rapide
+Transaction table // Charger tous les users en mémoire pour un accès rapide
+
+function randomChoice(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function randomDate(start, end) {
+  return new Date(
+    start.getTime() + Math.random() * (end.getTime() - start.getTime())
+  );
+}
+
+function randomAmount(min, max) {
+  return Math.round((Math.random() * (max - min) + min) / 5) * 5;
+}
+
 const allUsers = db.users.find({}, { userId: 1, phone: 1, balance: 1 }).toArray();
 const userBalances = {};       // phone -> solde courant
 const phoneToUserId = {};
@@ -197,7 +212,11 @@ rawEvents.forEach((event, i) => {
     }
 
   } else if (type === "transfert_p2p") {
-    receiverPhone = randomChoice(userPhones.filter(p => p !== senderPhone));
+    let receiverPhone;
+
+do {
+    receiverPhone = randomChoice(userPhones);
+} while (receiverPhone === senderPhone);
     amount = randomAmount(500, Math.min(currentBalance, 100000) || 500);
     fee = Math.round(amount * 0.01);
     if (amount + fee <= currentBalance) {
@@ -249,7 +268,7 @@ rawEvents.forEach((event, i) => {
   }
 
   batch.push({
-    transactionId: "MOMO" + i.toString().padStart(9, "0"),
+    transactionId: UUID(),
     type: type,
     senderPhone: senderPhone,
     senderId: phoneToUserId[senderPhone],
@@ -298,6 +317,44 @@ db.transactions.getShardDistribution()
 db.transactions.countDocuments()
 db.users.findOne({ userId: "USR000001" })
 
+## 14 - Creation des index user, agents et merchants
+
+db.users.createIndex({ phone: 1 }, { unique: true })
+db.users.createIndex({ userId: 1 }, { unique: true })
+db.users.createIndex({ operator: 1 })
+db.users.createIndex({ status: 1 })
+
+
+db.agents.createIndex({ agentId: 1 }, { unique: true })
+db.agents.createIndex({ region: 1 })
+
+db.merchants.createIndex({ merchantId: 1 }, { unique: true })
+db.merchants.createIndex({ category: 1 })
+
+
+// Unique sur transactionId (unicité par shard, cf. remarque ci-dessus)
+db.transactions.createIndex({ transactionId: 1 }, { unique: true })
+
+// Requêtes fréquentes : historique d'un utilisateur trié par date
+db.transactions.createIndex({ senderPhone: 1, transactionDate: -1 })
+
+// Requêtes sur le destinataire (transferts P2P)
+db.transactions.createIndex({ receiverPhone: 1, transactionDate: -1 })
+
+// Filtrage par statut (ex: lister les échecs, les en attente)
+db.transactions.createIndex({ status: 1, transactionDate: -1 })
+
+// Filtrage par type de transaction
+db.transactions.createIndex({ type: 1, transactionDate: -1 })
+
+// Requêtes par marchand (analytique commerçant)
+db.transactions.createIndex({ merchantId: 1, transactionDate: -1 })
+
+// Requêtes par agent (suivi des dépôts/retraits)
+db.transactions.createIndex({ agentId: 1, transactionDate: -1 })
+
+// Requêtes temporelles globales (dashboards, rapports journaliers)
+db.transactions.createIndex({ transactionDate: -1 })
 
 ## 14 -Petites requêtes utiles pour valider la cohérence
 
