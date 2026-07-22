@@ -16,6 +16,14 @@ mongosh --port 27020 --eval 'rs.initiate({_id:"shard2ReplSet", members:[{_id:0, 
 mongosh --port 27021 --eval 'rs.initiate({_id:"shard3ReplSet", members:[{_id:0, host:"localhost:27021"}]})'
 mongosh --port 27022 --eval 'rs.initiate({_id:"shard4ReplSet", members:[{_id:0, host:"localhost:27022"}]})'
 
+echo "Démarrage du routeur Mongos..."
+
+nohup mongos \
+  --configdb configReplSet/localhost:27019 \
+  --port 27017 \
+  --logpath "$(pwd)/mongo-cluster/logs/mongos.log" \
+  --logappend > /dev/null 2>&1 &
+
 sleep 5
 
 echo "Ajout des shards dans Mongos..."
