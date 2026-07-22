@@ -1,0 +1,62 @@
+Shard shard2ReplSet at shard2ReplSet/localhost:27020
+{
+  data: '10.63MiB',
+  docs: 24653,
+  chunks: 1,
+  'estimated data per chunk': '10.63MiB',
+  'estimated docs per chunk': 24653
+}
+---
+Shard shard1ReplSet at shard1ReplSet/localhost:27018
+{
+  data: '10.64MiB',
+  docs: 24675,
+  chunks: 1,
+  'estimated data per chunk': '10.64MiB',
+  'estimated docs per chunk': 24675
+}
+---
+Shard shard3ReplSet at shard3ReplSet/localhost:27021
+{
+  data: '11.05MiB',
+  docs: 25630,
+  chunks: 1,
+  'estimated data per chunk': '11.05MiB',
+  'estimated docs per chunk': 25630
+}
+---
+Shard shard4ReplSet at shard4ReplSet/localhost:27022
+{
+  data: '10.8MiB',
+  docs: 25042,
+  chunks: 1,
+  'estimated data per chunk': '10.8MiB',
+  'estimated docs per chunk': 25042
+}
+---
+Totals
+{
+  data: '43.15MiB',
+  docs: 100000,
+  chunks: 4,
+  'Shard shard2ReplSet': [
+    '24.64 % data',
+    '24.65 % docs in cluster',
+    '452B avg obj size on shard'
+  ],
+  'Shard shard1ReplSet': [
+    '24.67 % data',
+    '24.67 % docs in cluster',
+    '452B avg obj size on shard'
+  ],
+  'Shard shard3ReplSet': [
+    '25.63 % data',
+    '25.62 % docs in cluster',
+    '452B avg obj size on shard'
+  ],
+  'Shard shard4ReplSet': [
+    '25.03 % data',
+    '25.04 % docs in cluster',
+    '452B avg obj size on shard'
+  ]
+}

@@ -35,9 +35,9 @@ nohup mongod --shardsvr --replSet shard4ReplSet --port 27022 \
 
 sleep 5
 
-echo "Démarrage du routeur Mongos..."
-nohup mongos --configdb configReplSet/localhost:27019 --port 27017 \
-  --logpath "$BASE_DIR/logs/mongos.log" \
-  --logappend > /dev/null 2>&1 &
+# echo "Démarrage du routeur Mongos..."
+# nohup mongos --configdb configReplSet/localhost:27019 --port 27017 \
+#   --logpath "$BASE_DIR/logs/mongos.log" \
+#   --logappend > /dev/null 2>&1 &
 
 echo "Serveurs MongoDB démarrés."
